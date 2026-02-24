@@ -1,4 +1,4 @@
-name: Build OpenWrt system image
+name: ❖🏗️ 固件编译 🏗️❖
 
 on:
   workflow_dispatch:
@@ -48,7 +48,7 @@ on:
         
 jobs:
   build:
-    name: Build ${{ github.event.inputs.device }}
+    name: 🟢 正在编译 → ${{ github.event.inputs.device }}
     runs-on: ubuntu-24.04
     if: ${{ github.event.repository.owner.id == github.event.sender.id }}
     defaults:
