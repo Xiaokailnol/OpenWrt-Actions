@@ -308,33 +308,29 @@ rm -rf ../master
 # Load devices Config
 if [ "$platform" = "x86_64" ]; then
     curl -s $mirror/openwrt/25-config-musl-x86 > .config
-elif [ "$platform" = "rk3568" ]; then
-    curl -s $mirror/openwrt/25-config-musl-r5s > .config
-elif [ "$platform" = "rk3576" ]; then
-    curl -s $mirror/openwrt/25-config-musl-r76s > .config
-elif [ "$platform" = "armv8" ]; then
-    curl -s $mirror/openwrt/25-config-musl-armsr-armv8 > .config
-else
+elif [ "$platform" = "nanopi-r2s" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r2s > .config
+elif [ "$platform" = "nanopi-r3s" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r3s > .config
+elif [ "$platform" = "nanopi-r4s" ]; then
     curl -s $mirror/openwrt/25-config-musl-r4s > .config
+elif [ "$platform" = "nanopi-r5c" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r5c > .config
+elif [ "$platform" = "nanopi-r5s" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r5s > .config
+elif [ "$platform" = "nanopi-r6c" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r6c > .config
+elif [ "$platform" = "nanopi-r6s" ]; then
+    curl -s $mirror/openwrt/25-config-musl-r6s > .config
+else
+    curl -s $mirror/openwrt/25-config-musl-r76s > .config
 fi
 
 # config-common
-if [ "$MINIMAL_BUILD" = "y" ]; then
-    curl -s $mirror/openwrt/25-config-minimal-common >> .config
-    echo 'VERSION_TYPE="minimal"' >> package/base-files/files/usr/lib/os-release
-elif [ "$STD_BUILD" = "y" ]; then
-    curl -s $mirror/openwrt/25-config-std-common >> .config
-    echo 'VERSION_TYPE="standard"' >> package/base-files/files/usr/lib/os-release
-else
-    curl -s $mirror/openwrt/25-config-common >> .config
-    [ "$platform" = "armv8" ] && sed -i '/DOCKER/Id' .config
-fi
-
-# waiting fix
-curl -s $mirror/openwrt/6.18-disable-config >> .config
+curl -s $mirror/openwrt/25-config-common >> .config
 
 # ota
-[ "$ENABLE_OTA" = "y" ] && [ "$version" = "rc2" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
+[ "$ENABLE_OTA" = "y" ] && [ "$version" = "v25" ] && echo 'CONFIG_PACKAGE_luci-app-ota=y' >> .config
 
 # bpf
 [ "$ENABLE_BPF" = "y" ] && curl -s $mirror/openwrt/generic/config-bpf >> .config
@@ -342,18 +338,6 @@ curl -s $mirror/openwrt/6.18-disable-config >> .config
 # LTO
 export ENABLE_LTO=$ENABLE_LTO
 [ "$ENABLE_LTO" = "y" ] && curl -s $mirror/openwrt/generic/config-lto >> .config
-
-# glibc
-[ "$ENABLE_GLIBC" = "y" ] && {
-    curl -s $mirror/openwrt/generic/config-glibc >> .config
-    sed -i '/NaiveProxy/d' .config
-}
-
-# DPDK
-[ "$ENABLE_DPDK" = "y" ] && {
-    echo 'CONFIG_PACKAGE_dpdk-tools=y' >> .config
-    echo 'CONFIG_PACKAGE_numactl=y' >> .config
-}
 
 # istore
 [ "$ENABLE_ISTORE" = "y" ] && {
@@ -363,18 +347,6 @@ export ENABLE_LTO=$ENABLE_LTO
 
 # mold
 [ "$ENABLE_MOLD" = "y" ] && echo 'CONFIG_USE_MOLD=y' >> .config
-
-# kernel - CLANG + LTO; Allow CONFIG_KERNEL_CC=clang / clang-18 / clang-xx
-if [ "$KERNEL_CLANG_LTO" = "y" ]; then
-    echo '# Kernel - CLANG LTO' >> .config
-    if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
-        echo 'CONFIG_KERNEL_CC="ccache clang"' >> .config
-    else
-        echo 'CONFIG_KERNEL_CC="clang"' >> .config
-    fi
-    echo 'CONFIG_EXTRA_OPTIMIZATION=""' >> .config
-    echo '# CONFIG_PACKAGE_kselftests-bpf is not set' >> .config
-fi
 
 # kernel - enable LRNG
 if [ "$ENABLE_LRNG" = "y" ]; then
@@ -409,29 +381,21 @@ echo -e "CONFIG_GCC_USE_VERSION_${gcc_version}=y\n" >> .config
 if [ "$USE_GCC15" = "y" ] && [ "$ENABLE_CCACHE" = "y" ]; then
     echo "CONFIG_CCACHE=y" >> .config
     [ "$(whoami)" = "runner" ] && echo "CONFIG_CCACHE_DIR=\"/builder/.ccache\"" >> .config
-    [ "$(whoami)" = "sbwml" ] && echo "CONFIG_CCACHE_DIR=\"/home/sbwml/.ccache\"" >> .config
+    [ "$(whoami)" = "zhao" ] && echo "CONFIG_CCACHE_DIR=\"/home/zhao/.ccache\"" >> .config
     tools_suffix="_ccache"
 fi
 
-# nanopi-r76s
-[ "$platform" = "rk3576" ] && {
-    sed -i '/samba4/d' .config
-    sed -i '/qbittorrent/d' .config
-}
-
 # Toolchain Cache
 if [ "$BUILD_FAST" = "y" ]; then
-    [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    [ "$isCN" = "CN" ] && github_proxy="ghp.ci/" || github_proxy=""
     echo -e "\n${GREEN_COLOR}Download Toolchain ...${RES}"
     PLATFORM_ID=""
     [ -f /etc/os-release ] && source /etc/os-release
     if [ "$PLATFORM_ID" = "platform:el9" ]; then
         TOOLCHAIN_URL="http://127.0.0.1:8080"
     else
-        TOOLCHAIN_URL=https://"$github_proxy"github.com/sbwml/openwrt_caches/releases/download/openwrt-25.12
+        TOOLCHAIN_URL=https://"$github_proxy"github.com/Xiaokailnol/openwrt_caches/releases/download/openwrt-25.12
     fi
-    curl -L ${TOOLCHAIN_URL}/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst -o toolchain.tar.zst $CURL_BAR
+    curl -L ${TOOLCHAIN_URL}/toolchain_musl_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst -o toolchain.tar.zst $CURL_BAR
     echo -e "\n${GREEN_COLOR}Process Toolchain ...${RES}"
     tar -I "zstd" -xf toolchain.tar.zst
     rm -f toolchain.tar.zst
@@ -453,8 +417,7 @@ if [ "$BUILD_TOOLCHAIN" = "y" ]; then
     echo -e "\r\n${GREEN_COLOR}Building Toolchain ...${RES}\r\n"
     make -j$cores toolchain/compile || make -j$cores toolchain/compile V=s || exit 1
     mkdir -p toolchain-cache
-    [ "$ENABLE_GLIBC" = "y" ] && LIBC=glibc || LIBC=musl
-    tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_${LIBC}_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst ./{build_dir,dl,staging_dir,tmp}
+    tar -I "zstd -19 -T$(nproc --all)" -cf toolchain-cache/toolchain_musl_${toolchain_arch}_gcc-${gcc_version}${tools_suffix}.tar.zst ./{build_dir,dl,staging_dir,tmp}
     echo -e "\n${GREEN_COLOR} Build success! ${RES}"
     exit 0
 else
@@ -479,188 +442,3 @@ else
     echo
     exit 1
 fi
-
-if [ "$platform" = "x86_64" ]; then
-    if [ "$NO_KMOD" != "y" ]; then
-        cp -a bin/targets/x86/*/packages $kmodpkg_name
-        rm -f $kmodpkg_name/Packages*
-        cp -a bin/packages/x86_64/base/rtl88*a-firmware*.apk $kmodpkg_name/ || true
-        cp -a bin/packages/x86_64/base/natflow*.apk $kmodpkg_name/ || true
-        [ "$OPENWRT_CORE" = "y" ] && {
-            cp -a bin/packages/x86_64/base/*3ginfo*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/x86_64/base/*modemband*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/x86_64/base/*sms-tool*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/x86_64/base/*quectel*.apk $kmodpkg_name/ || true
-        }
-        [ "$ENABLE_DPDK" = "y" ] && {
-            cp -a bin/packages/x86_64/base/*dpdk*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/x86_64/base/*numa*.apk $kmodpkg_name/ || true
-        }
-        bash kmod-sign $kmodpkg_name
-        tar zcf x86_64-$kmodpkg_name.tar.gz $kmodpkg_name
-        rm -rf $kmodpkg_name
-    fi
-    # OTA json
-    if [ "$1" = "rc2" ]; then
-        mkdir -p ota
-        if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/minimal/x86_64"
-        elif [ "$STD_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/standard/x86_64"
-        else
-            OTA_URL="https://dev.cooluc.com/release/x86_64"
-        fi
-        VERSION=$(sed 's/v//g' version.txt)
-        SHA256=$(sha256sum bin/targets/x86/64*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
-        cat > ota/fw.json <<EOF
-{
-  "x86_64": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256",
-      "url": "$OTA_URL/openwrt-$VERSION-x86-64-generic-squashfs-combined-efi.img.gz"
-    }
-  ]
-}
-EOF
-    fi
-    # Backup download cache
-    if [ "$isCN" = "CN" ] && [ "$1" = "rc2" ]; then
-        rm -rf dl/geo* dl/go-mod-cache
-        tar cf ../dl.gz dl
-    fi
-    exit 0
-elif [ "$platform" = "armv8" ]; then
-    if [ "$NO_KMOD" != "y" ]; then
-        cp -a bin/targets/armsr/armv8*/packages $kmodpkg_name
-        rm -f $kmodpkg_name/Packages*
-        cp -a bin/packages/aarch64_generic/base/rtl88*a-firmware*.apk $kmodpkg_name/ || true
-        cp -a bin/packages/aarch64_generic/base/natflow*.apk $kmodpkg_name/ || true
-        [ "$OPENWRT_CORE" = "y" ] && {
-            cp -a bin/packages/aarch64_generic/base/*3ginfo*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*modemband*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*sms-tool*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*quectel*.apk $kmodpkg_name/ || true
-        }
-        [ "$ENABLE_DPDK" = "y" ] && {
-            cp -a bin/packages/aarch64_generic/base/*dpdk*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*numa*.apk $kmodpkg_name/ || true
-        }
-        bash kmod-sign $kmodpkg_name
-        tar zcf armv8-$kmodpkg_name.tar.gz $kmodpkg_name
-        rm -rf $kmodpkg_name
-    fi
-    # OTA json
-    if [ "$1" = "rc2" ]; then
-        mkdir -p ota
-        if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/minimal/armv8"
-        elif [ "$STD_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/standard/armv8"
-        else
-            OTA_URL="https://dev.cooluc.com/release/armv8"
-        fi
-        VERSION=$(sed 's/v//g' version.txt)
-        SHA256=$(sha256sum bin/targets/armsr/armv8*/*-generic-squashfs-combined-efi.img.gz | awk '{print $1}')
-        cat > ota/fw.json <<EOF
-{
-  "armsr,armv8": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256",
-      "url": "$OTA_URL/openwrt-$VERSION-armsr-armv8-generic-squashfs-combined-efi.img.gz"
-    }
-  ]
-}
-EOF
-    fi
-    exit 0
-else
-    if [ "$NO_KMOD" != "y" ] && [ "$platform" != "rk3399" ]; then
-        cp -a bin/targets/rockchip/armv8*/packages $kmodpkg_name
-        rm -f $kmodpkg_name/Packages*
-        cp -a bin/packages/aarch64_generic/base/rtl88*-firmware*.apk $kmodpkg_name/ || true
-        cp -a bin/packages/aarch64_generic/base/natflow*.apk $kmodpkg_name/ || true
-        [ "$OPENWRT_CORE" = "y" ] && {
-            cp -a bin/packages/aarch64_generic/base/*3ginfo*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*modemband*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*sms-tool*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*quectel*.apk $kmodpkg_name/ || true
-        }
-        [ "$ENABLE_DPDK" = "y" ] && {
-            cp -a bin/packages/aarch64_generic/base/*dpdk*.apk $kmodpkg_name/ || true
-            cp -a bin/packages/aarch64_generic/base/*numa*.apk $kmodpkg_name/ || true
-        }
-        bash kmod-sign $kmodpkg_name
-        tar zcf aarch64-$kmodpkg_name.tar.gz $kmodpkg_name
-        rm -rf $kmodpkg_name
-    fi
-    # OTA json
-    if [ "$1" = "rc2" ]; then
-        mkdir -p ota
-        if [ "$MINIMAL_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/minimal/$model"
-        elif [ "$STD_BUILD" = "y" ]; then
-            OTA_URL="https://dev.cooluc.com/standard/$model"
-        else
-            OTA_URL="https://dev.cooluc.com/release/$model"
-        fi
-        VERSION=$(sed 's/v//g' version.txt)
-        if [ "$model" = "nanopi-r4s" ]; then
-            SHA256=$(sha256sum bin/targets/rockchip/armv8*/*-squashfs-sysupgrade.img.gz | awk '{print $1}')
-            cat > ota/fw.json <<EOF
-{
-  "friendlyarm,nanopi-r4s": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256",
-      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r4s-squashfs-sysupgrade.img.gz"
-    }
-  ]
-}
-EOF
-        elif [ "$model" = "nanopi-r5s" ]; then
-            SHA256_R5C=$(sha256sum bin/targets/rockchip/armv8*/*-r5c-squashfs-sysupgrade.img.gz | awk '{print $1}')
-            SHA256_R5S=$(sha256sum bin/targets/rockchip/armv8*/*-r5s-squashfs-sysupgrade.img.gz | awk '{print $1}')
-            cat > ota/fw.json <<EOF
-{
-  "friendlyarm,nanopi-r5c": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256_R5C",
-      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5c-squashfs-sysupgrade.img.gz"
-    }
-  ],
-  "friendlyarm,nanopi-r5s": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256_R5S",
-      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r5s-squashfs-sysupgrade.img.gz"
-    }
-  ]
-}
-EOF
-        elif [ "$model" = "nanopi-r76s" ]; then
-            SHA256_R76S=$(sha256sum bin/targets/rockchip/armv8*/*-r76s-squashfs-sysupgrade.img.gz | awk '{print $1}')
-            cat > ota/fw.json <<EOF
-{
-  "friendlyarm,nanopi-r76s": [
-    {
-      "build_date": "$CURRENT_DATE",
-      "sha256sum": "$SHA256_R76S",
-      "url": "$OTA_URL/openwrt-$VERSION-rockchip-armv8-friendlyarm_nanopi-r76s-squashfs-sysupgrade.img.gz"
-    }
-  ]
-}
-EOF
-        fi
-    fi
-    # Backup download cache
-    if [ "$isCN" = "CN" ] && [ "$version" = "rc2" ]; then
-        rm -rf dl/geo* dl/go-mod-cache
-        tar -cf ../dl.gz dl
-    fi
-    exit 0
-fi
-
-# 很少有人会告诉你为什么要这样做，而是会要求你必须要这样做。
