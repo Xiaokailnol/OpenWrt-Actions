@@ -19,9 +19,6 @@ else
     git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/target_linux_x86 target/linux/x86 -b openwrt-25.12 --depth=1
 fi
 
-# bpf-headers - 6.12
-sed -ri "s/(PKG_PATCHVER:=)[^\"]*/\16.12/" package/kernel/bpf-headers/Makefile
-
 # kernel - 6.12
 curl -s $mirror/tags/kernel-6.12 > target/linux/generic/kernel-6.12
 
