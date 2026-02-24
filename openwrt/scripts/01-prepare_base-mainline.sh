@@ -171,14 +171,8 @@ curl -s $mirror/openwrt/patch/kernel-6.12/net/953-net-patch-linux-kernel-to-supp
 # rtl8822cs
 git clone https://$github/sbwml/package_kernel_rtl8822cs package/kernel/rtl8822cs
 
-# RTC
-if [ "$platform" = "rk3399" ] || [ "$platform" = "rk3568" ] || [ "$platform" = "rk3576" ]; then
-    curl -s $mirror/openwrt/patch/rtc/sysfixtime > package/base-files/files/etc/init.d/sysfixtime
-    chmod 755 package/base-files/files/etc/init.d/sysfixtime
-fi
-
 # emmc-install
-if [ "$platform" = "rk3568" ] || [ "$platform" = "rk3576" ]; then
+if [ "$platform" = "nanopi-r5s" ] || [ "$platform" = "nanopi-r76s" ]; then
     mkdir -p files/sbin
     curl -so files/sbin/emmc-install $mirror/openwrt/files/sbin/emmc-install
     chmod 755 files/sbin/emmc-install
