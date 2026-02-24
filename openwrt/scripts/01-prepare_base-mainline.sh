@@ -124,32 +124,21 @@ pushd target/linux/generic/hack-6.12
     curl -Os $mirror/openwrt/patch/kernel-6.12/lrng/696-v59-0025-LRNG-add-hwrand-framework-interface.patch
 popd
 
-# linux-rt - i915
-pushd target/linux/generic/hack-6.18
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0001-drm-i915-Use-preempt_disable-enable_rt-where-recomme.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0002-drm-i915-Don-t-disable-interrupts-on-PREEMPT_RT-duri.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0003-drm-i915-Disable-tracing-points-on-PREEMPT_RT.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0004-drm-i915-gt-Use-spin_lock_irq-instead-of-local_irq_d.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0005-drm-i915-Drop-the-irqs_disabled-check.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0006-drm-i915-guc-Consider-also-RCU-depth-in-busy-loop.patch
-    curl -Os $mirror/openwrt/patch/kernel-6.12/linux-rt/012-RT-0007-Revert-drm-i915-Depend-on-PREEMPT_RT.patch
-popd
-
 # linux-firmware
 rm -rf package/firmware/linux-firmware
-git clone https://$github/Xiaokailnol/package_firmware_linux-firmware package/firmware/linux-firmware
+git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_firmware_linux-firmware package/firmware/linux-firmware
 
 # mt76
 rm -rf package/kernel/mt76
-git clone https://$github/Xiaokailnol/package_kernel_mt76 package/kernel/mt76
+git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel_mt76 package/kernel/mt76
 
 # mac80211 - 6.18
 rm -rf package/kernel/mac80211
-git clone https://$github/Xiaokailnol/package_kernel_mac80211 package/kernel/mac80211 -b openwrt-25.12
+git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel_mac80211 package/kernel/mac80211 -b openwrt-25.12
 
 # ath10k-ct
 rm -rf package/kernel/ath10k-ct
-git clone https://$github/Xiaokailnol/package_kernel_ath10k-ct package/kernel/ath10k-ct -b openwrt-25.12
+git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel_ath10k-ct package/kernel/ath10k-ct -b openwrt-25.12
 
 # kernel patch
 # set nf_conntrack_expect_max for fullcone
