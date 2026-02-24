@@ -9,9 +9,6 @@ if [ "$ENABLE_MOLD" = "y" ]; then
     sed -i '/PKG_BUILD_PARALLEL/aPKG_BUILD_FLAGS:=no-mold' feeds/packages/utils/attr/Makefile
 fi
 
-# irqbalance
-curl -s $mirror/openwrt/patch/packages-patches/irqbalance/901-meson-disable-numa-option-by-default.patch > feeds/packages/utils/irqbalance/patches/901-meson-disable-numa-option-by-default.patch
-
 # libsodium - fix build with lto (GNU BUG - 89147)
 sed -i "/CONFIGURE_ARGS/i\TARGET_CFLAGS += -ffat-lto-objects\n" feeds/packages/libs/libsodium/Makefile
 
@@ -28,13 +25,6 @@ sed -i 's/0666/0644/g;s/0777/0755/g' feeds/luci/applications/luci-app-ksmbd/htdo
 # ksmbd tools
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/ksmbd-tools/files/ksmbd.config.example
 sed -i 's/bind interfaces only = yes/bind interfaces only = no/g' feeds/packages/net/ksmbd-tools/files/ksmbd.conf.template
-
-# perf
-curl -s $mirror/openwrt/patch/openwrt-6.x/musl/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch > toolchain/musl/patches/990-add-typedefs-for-Elf64_Relr-and-Elf32_Relr.patch
-curl -s $mirror/openwrt/patch/openwrt-6.x/perf/Makefile > package/devel/perf/Makefile
-
-# kselftests-bpf
-curl -s $mirror/openwrt/patch/packages-patches/kselftests-bpf/Makefile > package/devel/kselftests-bpf/Makefile
 
 #######################################
 
