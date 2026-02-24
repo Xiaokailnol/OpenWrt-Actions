@@ -1,4 +1,4 @@
-name: ❖ 固件编译 ❖
+name: ❖ 𝓕𝓲𝓻𝓶𝔀𝓪𝓻𝓮 𝓑𝓾𝓲𝓵𝓭 ❖
 
 on:
   workflow_dispatch:
@@ -48,7 +48,7 @@ on:
         
 jobs:
   build:
-    name: 🟢 正在编译 → ${{ github.event.inputs.device }}
+    name: 🟢 𝓕𝓲𝓻𝓶𝔀𝓪𝓻𝓮 𝓑𝓾𝓲𝓵𝓭 → ${{ github.event.inputs.device }}
     runs-on: ubuntu-24.04
     if: ${{ github.event.repository.owner.id == github.event.sender.id }}
     defaults:
