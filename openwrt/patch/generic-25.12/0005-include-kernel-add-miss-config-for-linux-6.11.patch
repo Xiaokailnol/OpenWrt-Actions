@@ -1,0 +1,24 @@
+From c4605f767dc84a4dfc4067d22eec4891d623821d Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Wed, 11 Feb 2026 10:54:16 +0800
+Subject: [PATCH 05/10] include: kernel: add miss config for linux-6.11
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ include/kernel-defaults.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/kernel-defaults.mk b/include/kernel-defaults.mk
+index 071e23f533..9d3775cd27 100644
+--- a/include/kernel-defaults.mk
++++ b/include/kernel-defaults.mk
+@@ -107,6 +107,7 @@ define Kernel/SetNoInitramfs
+ 	echo 'CONFIG_INITRAMFS_SOURCE=""' >> $(LINUX_DIR)/.config.set
+ 	echo '# CONFIG_INITRAMFS_FORCE is not set' >> $(LINUX_DIR)/.config.set
+ 	echo "# CONFIG_INITRAMFS_PRESERVE_MTIME is not set" >> $(LINUX_DIR)/.config.set
++	echo '# CONFIG_FSCACHE is not set' >> $(LINUX_DIR)/.config.set
+ # BTF
+ ifeq ($(call qstrip,$(CONFIG_KERNEL_BPF_EVENTS)),y)
+ 	echo 'CONFIG_DEBUG_INFO_BTF_MODULES=y' >> $(LINUX_DIR)/.config.set
+-- 
+2.43.0

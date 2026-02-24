@@ -1,0 +1,28 @@
+From 2e6f163cfbb701747f7b7a4762063167385b519a Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Mon, 9 Feb 2026 15:42:16 +0800
+Subject: [PATCH 07/10] tools: squashfs4: enable lz4 & zstd compression support
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ tools/squashfs4/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/squashfs4/Makefile b/tools/squashfs4/Makefile
+index 43891a1d5d..3ce873be75 100644
+--- a/tools/squashfs4/Makefile
++++ b/tools/squashfs4/Makefile
+@@ -24,9 +24,9 @@ include $(INCLUDE_DIR)/host-build.mk
+ define Host/Compile
+ 	+$(HOST_MAKE_VARS) \
+ 	$(MAKE) $(HOST_JOBS) -C $(HOST_BUILD_DIR)/squashfs-tools \
+-		LZ4_SUPPORT=0 \
++		LZ4_SUPPORT=1 \
+ 		LZO_SUPPORT=0 \
+-		ZSTD_SUPPORT=0 \
++		ZSTD_SUPPORT=1 \
+ 		GZIP_SUPPORT=1 \
+ 		XZ_SUPPORT=1 \
+ 		LZMA_XZ_SUPPORT=1 \
+-- 
+2.43.0

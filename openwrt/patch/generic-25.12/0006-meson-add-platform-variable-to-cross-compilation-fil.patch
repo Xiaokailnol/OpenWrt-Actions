@@ -1,0 +1,35 @@
+From 7e57e16580535cfab1f4e50936d604ec3d62ae37 Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Mon, 9 Feb 2026 15:39:32 +0800
+Subject: [PATCH 06/10] meson: add platform variable to cross-compilation file
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ include/meson.mk                       | 1 +
+ tools/meson/files/openwrt-cross.txt.in | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/include/meson.mk b/include/meson.mk
+index 62dc7bd5de..91cd7e6b03 100644
+--- a/include/meson.mk
++++ b/include/meson.mk
+@@ -96,6 +96,7 @@ define Meson/CreateCrossFile
+ 		-e "s|@LDFLAGS@|$(foreach FLAG,$(TARGET_LDFLAGS) $(EXTRA_LDFLAGS),'$(FLAG)',)|" \
+ 		-e "s|@ARCH@|$(MESON_ARCH)|" \
+ 		-e "s|@CPU@|$(MESON_CPU)|" \
++		-e "s|@PLAT@|$(MESON_CPU)|" \
+ 		-e "s|@ENDIAN@|$(if $(CONFIG_BIG_ENDIAN),big,little)|" \
+ 		< $(MESON_DIR)/openwrt-cross.txt.in \
+ 		> $(1)
+diff --git a/tools/meson/files/openwrt-cross.txt.in b/tools/meson/files/openwrt-cross.txt.in
+index 836a0e51e4..cc83bc82b6 100644
+--- a/tools/meson/files/openwrt-cross.txt.in
++++ b/tools/meson/files/openwrt-cross.txt.in
+@@ -24,4 +24,5 @@ cpu = '@CPU@'
+ endian = '@ENDIAN@'
+ 
+ [properties]
++platform = '@PLAT@'
+ needs_exe_wrapper = true
+-- 
+2.43.0

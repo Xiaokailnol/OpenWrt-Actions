@@ -1,0 +1,24 @@
+From 92666c850960a4a661aab1b746bfa2bc9b86b5e6 Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Mon, 9 Feb 2026 15:16:17 +0800
+Subject: [PATCH 03/10] rootfs: add r/w permissions for UCI configuration files
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ include/rootfs.mk | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/rootfs.mk b/include/rootfs.mk
+index f778aef4d2..d049ca5a6e 100644
+--- a/include/rootfs.mk
++++ b/include/rootfs.mk
+@@ -126,6 +126,7 @@ define prepare_rootfs
+ 			$(STAGING_DIR_HOST)/bin/upx --lzma --best "$(1)$$file" || true; \
+ 		done < "$(TOPDIR)/upx_list.txt"; \
+ 	fi
++	chmod 600 $(1)/etc/config/*
+ 	$(call clean_ipkg,$(1))
+ 	$(call mklibs,$(1))
+ 	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
+-- 
+2.43.0

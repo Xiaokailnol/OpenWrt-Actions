@@ -1,0 +1,23 @@
+From bbf39d07fd43977f55a4b9ba9e384cdf8a0d2b50 Mon Sep 17 00:00:00 2001
+From: QiuSimons <45143996+QiuSimons@users.noreply.github.com>
+Date: Fri, 24 Mar 2023 22:16:42 +0800
+Subject: [PATCH] Update network
+
+Signed-off-by: QiuSimons <45143996+QiuSimons@users.noreply.github.com>
+---
+ package/network/config/netifd/files/etc/init.d/network | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/package/network/config/netifd/files/etc/init.d/network b/package/network/config/netifd/files/etc/init.d/network
+index dc208c4ce0a1f5..67714091466100 100755
+--- a/package/network/config/netifd/files/etc/init.d/network
++++ b/package/network/config/netifd/files/etc/init.d/network
+@@ -15,6 +15,8 @@ init_switch() {
+ start_service() {
+ 	init_switch
+ 
++	sysctl -w net.netfilter.nf_conntrack_expect_max=$(($(sysctl -n net.netfilter.nf_conntrack_buckets) / 4))
++
+ 	procd_open_instance
+ 	procd_set_param command /sbin/netifd
+ 	procd_set_param respawn

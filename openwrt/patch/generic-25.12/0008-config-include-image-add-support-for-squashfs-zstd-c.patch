@@ -1,0 +1,46 @@
+From 5dcf486985131bf465c641f822893880df60efa3 Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Mon, 9 Feb 2026 15:52:23 +0800
+Subject: [PATCH 08/10] config/include: image: add support for squashfs zstd
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ config/Config-images.in | 7 +++++++
+ include/image.mk        | 4 ++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/config/Config-images.in b/config/Config-images.in
+index 8094136bd9..37212923cc 100644
+--- a/config/Config-images.in
++++ b/config/Config-images.in
+@@ -194,6 +194,13 @@ menu "Target Images"
+ 			  Specify the number of parallel small file reader threads
+ 			  (for files less than the squashfs block size).
+ 
++		config TARGET_ROOTFS_SQUASHFS_ZSTD
++			bool "SquashFS Zstd"
++			depends on TARGET_ROOTFS_SQUASHFS
++			default n
++			help
++			  Build a squashfs root filesystem using zstd compression.
++
+ 	menuconfig TARGET_ROOTFS_UBIFS
+ 		bool "ubifs"
+ 		default y if USES_UBIFS
+diff --git a/include/image.mk b/include/image.mk
+index 38005b2ab2..078d2f7d5c 100644
+--- a/include/image.mk
++++ b/include/image.mk
+@@ -100,6 +100,10 @@ ifeq ($(CONFIG_SQUASHFS_XZ),y)
+   SQUASHFSCOMP := xz $(LZMA_XZ_OPTIONS) $(BCJ_FILTER)
+ endif
+ 
++ifeq ($(CONFIG_TARGET_ROOTFS_SQUASHFS_ZSTD),y)
++  SQUASHFSCOMP := zstd -Xcompression-level 22
++endif
++
+ JFFS2_BLOCKSIZE ?= 64k 128k
+ 
+ EROFS_PCLUSTERSIZE = $(shell echo $$(($(CONFIG_TARGET_EROFS_PCLUSTER_SIZE)*1024)))
+-- 
+2.43.0

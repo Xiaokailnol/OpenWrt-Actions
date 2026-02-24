@@ -1,0 +1,28 @@
+From 3faafb9dc6fc1d5f6fa6eb946f56743effb36b22 Mon Sep 17 00:00:00 2001
+From: Xiaokailnol <2519840456@qq.com>
+Date: Mon, 9 Feb 2026 15:12:37 +0800
+Subject: [PATCH 02/10] rootfs: add upx compression support
+
+Signed-off-by: Xiaokailnol <2519840456@qq.com>
+---
+ include/rootfs.mk | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/rootfs.mk b/include/rootfs.mk
+index 02fa3b13d7..f778aef4d2 100644
+--- a/include/rootfs.mk
++++ b/include/rootfs.mk
+@@ -121,6 +121,11 @@ define prepare_rootfs
+ 		$(1)/usr/lib/opkg/info/*.postinst* \
+ 		$(1)/usr/lib/opkg/lists/* \
+ 		$(1)/var/lock/*.lock
++	@if [ -f "$(TOPDIR)/upx_list.txt" ]; then \
++		while IFS= read -r file; do \
++			$(STAGING_DIR_HOST)/bin/upx --lzma --best "$(1)$$file" || true; \
++		done < "$(TOPDIR)/upx_list.txt"; \
++	fi
+ 	$(call clean_ipkg,$(1))
+ 	$(call mklibs,$(1))
+ 	$(if $(SOURCE_DATE_EPOCH),find $(1)/ -mindepth 1 -execdir touch -hcd "@$(SOURCE_DATE_EPOCH)" "{}" +)
+-- 
+2.43.0
