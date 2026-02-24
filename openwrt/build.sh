@@ -31,25 +31,11 @@ fi
 #        OpenWrt Build Script       #
 #####################################
 
-# IP Location
-ip_info=`curl -sk https://ip.cooluc.com`;
-[ -n "$ip_info" ] && export isCN=`echo $ip_info | grep -Po 'country_code\":"\K[^"]+'` || export isCN=US
-
 # script url
-export mirror=https://init.kejizero.xyz
+export mirror=http://127.0.0.1:8080
 
-# private gitea
-export gitea="git.kejizero.xyz"
-
-# github mirror
-if [ "$isCN" = "CN" ]; then
-    # There is currently no stable gh proxy
-    export github="github.com"
-    code_mirror="git.kejizero.xyz"
-else
-    export github="github.com"
-    code_mirror="git.kejizero.xyz"
-fi
+# github
+export github="github.com"
 
 # Check root
 if [ "$(id -u)" = "0" ]; then
@@ -68,7 +54,7 @@ if curl --help | grep progress-bar >/dev/null 2>&1; then
     CURL_BAR="--progress-bar";
 fi
 
-SUPPORTED_BOARDS="nanopi-r4s nanopi-r5s nanopi-r76s x86_64 armv8"
+SUPPORTED_BOARDS="nanopi-r2s nanopi-r3s nanopi-r4s nanopi-r5c nanopi-r5s nanopi-r6c nanopi-r6s nanopi-r76s x86_64"
 if [ -z "$1" ] || ! echo "$SUPPORTED_BOARDS" | grep -qw "$2"; then
     echo -e "\n${RED_COLOR}Building type not specified or unsupported board: '$2'.${RES}\n"
     echo -e "Usage:\n"
@@ -88,7 +74,7 @@ if [ "$1" = "dev" ]; then
 elif [ "$1" = "v25" ]; then
     latest_release="v$(curl -s $mirror/tags/v25)"
     export branch=$latest_release
-    export version=rc2
+    export version=v25
 fi
 
 # lan
@@ -96,16 +82,32 @@ fi
 
 # platform
 case "$2" in
-    armv8)
-        platform="armv8"
+    nanopi-r2s)
+        platform="nanopi-r2s"
         toolchain_arch="aarch64_generic"
         ;;
+    nanopi-r3s)
+        platform="nanopi-r3s"
+        toolchain_arch="aarch64_generic"
+        ;;        
     nanopi-r4s)
-        platform="rk3399"
+        platform="nanopi-r4s"
         toolchain_arch="aarch64_generic"
         ;;
+    nanopi-r5c)
+        platform="nanopi-r5c"
+        toolchain_arch="aarch64_generic"
+        ;;        
     nanopi-r5s)
-        platform="rk3568"
+        platform="nanopi-r5s"
+        toolchain_arch="aarch64_generic"
+        ;;
+    nanopi-r6c)
+        platform="nanopi-r6c"
+        toolchain_arch="aarch64_generic"
+        ;;
+    nanopi-r6s)
+        platform="nanopi-r6s"
         toolchain_arch="aarch64_generic"
         ;;
     nanopi-r76s)
@@ -134,10 +136,7 @@ fi
 # build.sh flags
 export \
     ENABLE_BPF=$ENABLE_BPF \
-    ENABLE_DPDK=$ENABLE_DPDK \
-    ENABLE_GLIBC=$ENABLE_GLIBC \
     ENABLE_LRNG=$ENABLE_LRNG \
-    KERNEL_CLANG_LTO=$KERNEL_CLANG_LTO \
     ROOT_PASSWORD=$ROOT_PASSWORD
 
 # print version
@@ -146,26 +145,42 @@ case "$platform" in
     x86_64)
         echo -e "${GREEN_COLOR}Model: x86_64${RES}"
         ;;
-    armv8)
-        echo -e "${GREEN_COLOR}Model: armsr/armv8${RES}"
-        [ "$1" = "v25" ] && model="armv8"
+    nanopi-r2s)
+        echo -e "${GREEN_COLOR}Model: nanopi-r2s${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r2s"
         ;;
-    rk3568)
-        echo -e "${GREEN_COLOR}Model: nanopi-r5s/r5c${RES}"
-        [ "$1" = "v25" ] && model="nanopi-r5s"
+    nanopi-r3s)
+        echo -e "${GREEN_COLOR}Model: nanopi-r3s${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r3s"
         ;;
-    rk3576)
-        echo -e "${GREEN_COLOR}Model: nanopi-r76s${RES}"
-        [ "$1" = "v25" ] && model="nanopi-r76s"
-        ;;
-    rk3399|*)
+    nanopi-r4s)
         echo -e "${GREEN_COLOR}Model: nanopi-r4s${RES}"
         [ "$1" = "v25" ] && model="nanopi-r4s"
         ;;
+    nanopi-r5c)
+        echo -e "${GREEN_COLOR}Model: nanopi-r5c${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r5c"
+        ;;
+    nanopi-r5s)
+        echo -e "${GREEN_COLOR}Model: nanopi-r5s${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r5s"
+        ;;
+    nanopi-r6c)
+        echo -e "${GREEN_COLOR}Model: nanopi-r6c${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r6c"
+        ;;
+    nanopi-r6s)
+        echo -e "${GREEN_COLOR}Model: nanopi-r6s${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r6s"
+        ;;
+    nanopi-r76s)
+        echo -e "${GREEN_COLOR}Model: nanopi-r76s${RES}"
+        [ "$1" = "v25" ] && model="nanopi-r76s"
+        ;;        
 esac
 
 # print build opt
-get_kernel_version=$(curl -s $mirror/tags/kernel-6.18)
+get_kernel_version=$(curl -s $mirror/tags/kernel-6.12)
 kmod_hash=$(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}' | tail -1 | md5sum | awk '{print $1}')
 kmodpkg_name=$(echo $(echo -e "$get_kernel_version" | awk -F'HASH-' '{print $2}' | awk '{print $1}')~$(echo $kmod_hash)-r1)
 echo -e "${GREEN_COLOR}Kernel: $kmodpkg_name ${RES}"
@@ -190,7 +205,6 @@ print_status() {
     || echo -e "${GREEN_COLOR}Default Password:${RES} (${YELLOW_COLOR}No password${RES})"
 [ "$ENABLE_GLIBC" = "y" ] && echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}glibc${RES}" || echo -e "${GREEN_COLOR}Standard C Library:${RES} ${BLUE_COLOR}musl${RES}"
 print_status "ENABLE_OTA"        "$ENABLE_OTA"
-print_status "ENABLE_DPDK"       "$ENABLE_DPDK"
 print_status "ENABLE_MOLD"       "$ENABLE_MOLD"
 print_status "ENABLE_BPF"        "$ENABLE_BPF" "$GREEN_COLOR" "$RED_COLOR"
 print_status "ENABLE_LTO"        "$ENABLE_LTO" "$GREEN_COLOR" "$RED_COLOR"
@@ -198,13 +212,10 @@ print_status "ENABLE_LRNG"       "$ENABLE_LRNG" "$GREEN_COLOR" "$RED_COLOR"
 print_status "ENABLE_LOCAL_KMOD" "$ENABLE_LOCAL_KMOD"
 print_status "BUILD_FAST"        "$BUILD_FAST"
 print_status "ENABLE_CCACHE"     "$ENABLE_CCACHE"
-print_status "MINIMAL_BUILD"     "$MINIMAL_BUILD"
-print_status "STD_BUILD"         "$STD_BUILD"
-print_status "ENABLE_ISTORE"     "$ENABLE_ISTORE"
-print_status "KERNEL_CLANG_LTO"  "$KERNEL_CLANG_LTO" "$GREEN_COLOR" "$YELLOW_COLOR" "\n"
+print_status "ENABLE_ISTORE"     "$ENABLE_ISTORE""\n"
 
 # clean old files
-rm -rf openwrt master
+rm -rf openwrt
 
 # openwrt - releases
 [ "$(whoami)" = "runner" ] && group "source code"
@@ -220,14 +231,14 @@ else
 fi
 
 # tags
-if [ "$1" = "rc2" ]; then
+if [ "$1" = "v25" ]; then
     git describe --abbrev=0 --tags > version.txt
 else
     git branch | awk '{print $2}' > version.txt
 fi
 
 # feeds mirror
-if [ "$1" = "rc2" ]; then
+if [ "$1" = "v25" ]; then
     packages="^$(grep packages feeds.conf.default | awk -F^ '{print $2}')"
     luci="^$(grep luci feeds.conf.default | awk -F^ '{print $2}')"
     routing="^$(grep routing feeds.conf.default | awk -F^ '{print $2}')"
@@ -239,10 +250,10 @@ else
     telephony=";$branch"
 fi
 cat > feeds.conf <<EOF
-src-git packages https://$code_mirror/openwrt/packages.git$packages
-src-git luci https://$code_mirror/openwrt/luci.git$luci
-src-git routing https://$code_mirror/openwrt/routing.git$routing
-src-git telephony https://$code_mirror/openwrt/telephony.git$telephony
+src-git packages https://$github/openwrt/packages.git$packages
+src-git luci https://$github/openwrt/luci.git$luci
+src-git routing https://$github/openwrt/routing.git$routing
+src-git telephony https://$github/openwrt/telephony.git$telephony
 EOF
 
 # Init feeds
