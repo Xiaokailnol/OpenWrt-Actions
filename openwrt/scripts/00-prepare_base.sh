@@ -170,8 +170,8 @@ sed -i 's/procd_set_param stderr 1/procd_set_param stderr 0/g' feeds/packages/ut
 
 # UPnP
 rm -rf feeds/{packages/net/miniupnpd,luci/applications/luci-app-upnp}
-git clone https://$gitea/sbwml/miniupnpd feeds/packages/net/miniupnpd -b v2.3.9
-git clone https://$gitea/sbwml/luci-app-upnp feeds/luci/applications/luci-app-upnp -b openwrt-24.10
+git clone https://$github/Xiaokailnol/miniupnpd feeds/packages/net/miniupnpd -b v2.3.9
+git clone https://$github/Xiaokailnol/luci-app-upnp feeds/luci/applications/luci-app-upnp -b openwrt-25.12
 
 # nginx - latest version
 rm -rf feeds/packages/net/nginx
