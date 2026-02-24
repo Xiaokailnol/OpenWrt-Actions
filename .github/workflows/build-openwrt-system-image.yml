@@ -89,7 +89,7 @@ jobs:
         sudo curl -sL -o /usr/bin/caddy https://github.com/Xiaokailnol/AutoSync/releases/download/tools/caddy
         sudo chmod 755 /usr/bin/caddy
         echo ":8080 {" > caddyfile
-        echo "    root * $(pwd)/r4s_build_script" >> caddyfile
+        echo "    root * $(pwd)/OpenWrt-Actions" >> caddyfile
         echo "    file_server browse" >> caddyfile
         echo "}" >> caddyfile
         sudo /usr/bin/caddy start --config caddyfile --adapter caddyfile
