@@ -219,7 +219,7 @@ rm -rf openwrt
 
 # openwrt - releases
 [ "$(whoami)" = "runner" ] && group "source code"
-git clone --depth=1 https://$code_mirror/openwrt/openwrt -b $branch
+git clone --depth=1 https://$github/openwrt/openwrt -b $branch
 
 [ "$(whoami)" = "runner" ] && endgroup
 if [ -d openwrt ]; then
