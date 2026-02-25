@@ -198,7 +198,22 @@ jobs:
       working-directory: /builder
       run: |
         mkdir -p rom info
-
+        if [[ "${{ github.event.inputs.device }}" == nanopi-* ]]; then
+          cp -a openwrt/bin/targets/rockchip/*/*.img.gz rom/
+          cp -a openwrt/bin/targets/rockchip/*/*.manifest info/manifest.txt
+          cp -a openwrt/bin/targets/rockchip/*/config.buildinfo info/config.buildinfo
+          cd rom && sha256sum *gz > ../info/sha256sums.txt
+        elif [ "${{ github.event.inputs.device }}" = "x86_64" ]; then
+          cp -a openwrt/bin/targets/x86/*/*-ext4-combined-efi.img.gz rom/
+          cp -a openwrt/bin/targets/x86/*/*-squashfs-combined-efi.img.gz rom/
+          cp -a openwrt/bin/targets/x86/*/*-generic-rootfs.tar.gz rom/
+          cp -a openwrt/bin/targets/x86/*/*-generic.manifest info/manifest.txt
+          cp -a openwrt/bin/targets/x86/*/config.buildinfo info/config.buildinfo
+          cd rom && sha256sum *gz > ../info/sha256sums.txt
+        fi
+        cd ..
+        tar zcf rom/buildinfo_${{ github.event.inputs.device }}.tar.gz info
+        
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
