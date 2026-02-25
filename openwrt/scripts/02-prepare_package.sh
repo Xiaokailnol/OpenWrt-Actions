@@ -146,7 +146,7 @@ sed -i 's,frp 客户端,Frp 客户端,g' feeds/luci/applications/luci-app-frpc/p
 
 # luci-app-sqm
 rm -rf feeds/luci/applications/luci-app-sqm
-git clone https://$github/sbwml/luci-app-sqm feeds/luci/applications/luci-app-sqm
+git clone https://$github/Xiaokailnol/luci-app-sqm feeds/luci/applications/luci-app-sqm
 
 # unzip
 rm -rf feeds/packages/utils/unzip
