@@ -137,6 +137,10 @@ git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel
 rm -rf package/kernel/ath10k-ct
 git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel_ath10k-ct package/kernel/ath10k-ct -b openwrt-25.12
 
+# rtl8812au-ct
+rm -rf package/kernel/rtl8812au-ct
+git clone https://"$git_name":"$git_password"@$github/Xiaokailnol/package_kernel_rtl8812au-ct package/kernel/rtl8812au-ct -b openwrt-25.12
+
 # kernel patch
 # set nf_conntrack_expect_max for fullcone
 curl -s $mirror/openwrt/patch/kernel-6.12/net/001-netfilter-add-nf-conntrack-chain-events-support.patch | patch -p1
