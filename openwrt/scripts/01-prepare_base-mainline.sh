@@ -158,9 +158,6 @@ curl -s $mirror/openwrt/patch/kernel-6.12/net/613-netfilter_optional_tcp_window_
 curl -s $mirror/openwrt/patch/kernel-6.12/net/952-add-net-conntrack-events-support-multiple-registrant.patch > target/linux/generic/hack-6.12/952-add-net-conntrack-events-support-multiple-registrant.patch
 curl -s $mirror/openwrt/patch/kernel-6.12/net/953-net-patch-linux-kernel-to-support-shortcut-fe.patch > target/linux/generic/hack-6.12/953-net-patch-linux-kernel-to-support-shortcut-fe.patch
 
-# rtl8822cs
-git clone https://$github/sbwml/package_kernel_rtl8822cs package/kernel/rtl8822cs
-
 # emmc-install
 if [ "$platform" = "nanopi-r5s" ] || [ "$platform" = "nanopi-r76s" ]; then
     mkdir -p files/sbin
