@@ -287,8 +287,7 @@ define KernelPackage/multimedia-input
   KCONFIG:=CONFIG_RC_CORE \
 	CONFIG_LIRC=y \
 	CONFIG_RC_DECODERS=y \
-	CONFIG_RC_DEVICES=y \
-	CONFIG_IR_IMON_DECODER=y
+	CONFIG_RC_DEVICES=y
   FILES:=$(LINUX_DIR)/drivers/media/rc/rc-core.ko
   AUTOLOAD:=$(call AutoProbe,rc-core)
 endef
