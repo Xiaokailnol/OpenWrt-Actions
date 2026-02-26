@@ -161,7 +161,7 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GH_REPO: ${{ github.repository }}
       run: |
-        gh cache delete openwrt-24.10-${{ github.event.inputs.device }}-ccache || true
+        gh cache delete openwrt-25.12-${{ github.event.inputs.device }}-ccache || true
 
     - name: Save Cached
       if: ${{ github.event.inputs.ccache == 'true' }}
