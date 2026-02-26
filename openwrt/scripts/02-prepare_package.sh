@@ -6,13 +6,13 @@ git clone https://$github/sbwml/packages_lang_golang -b 26.x feeds/packages/lang
 
 # node - prebuilt
 rm -rf feeds/packages/lang/node
-git clone https://$github/sbwml/feeds_packages_lang_node-prebuilt feeds/packages/lang/node -b packages-24.10
+git clone https://$github/Xiaokailnol/feeds_packages_lang_node-prebuilt feeds/packages/lang/node -b packages-24.10
 
 # default settings
 git clone https://$github/Xiaokailnol/default-settings package/new/default-settings -b openwrt-25.12
 
 # wwan
-git clone https://$github/sbwml/wwan-packages package/new/wwan --depth=1
+git clone https://$github/Xiaokailnol/wwan-packages package/new/wwan --depth=1
 
 # bandix
 git clone https://$github/timsaya/openwrt-bandix package/new/bandix --depth=1
