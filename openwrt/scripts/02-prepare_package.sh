@@ -9,7 +9,7 @@ rm -rf feeds/packages/lang/node
 git clone https://$github/Xiaokailnol/feeds_packages_lang_node-prebuilt feeds/packages/lang/node -b packages-24.10
 
 # package - openwrt-25.12
-git clone https://$github/Xiaokailnol/openwrt_packages package/new/openwrt_packages
+git clone https://$github/Xiaokailnol/openwrt_packages package/new/openwrt_packages -b openwrt-25.12
 
 # wwan
 git clone https://$github/Xiaokailnol/wwan-packages package/new/wwan --depth=1
