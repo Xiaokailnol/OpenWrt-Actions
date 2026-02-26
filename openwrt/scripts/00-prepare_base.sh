@@ -24,6 +24,9 @@ curl -s $mirror/openwrt/patch/generic-25.12/0010-include-netfilter-update-kernel
 # x86 - disable mitigations
 sed -i 's/noinitrd/noinitrd mitigations=off/g' target/linux/x86/image/grub-efi.cfg
 
+# default LAN IP
+sed -i "s/192.168.1.1/$LAN/g" package/base-files/files/bin/config_generate
+
 # default password
 if [ -n "$ROOT_PASSWORD" ]; then
     # sha256 encryption
