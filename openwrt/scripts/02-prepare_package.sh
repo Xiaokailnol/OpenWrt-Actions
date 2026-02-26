@@ -8,28 +8,15 @@ git clone https://$github/sbwml/packages_lang_golang -b 26.x feeds/packages/lang
 rm -rf feeds/packages/lang/node
 git clone https://$github/Xiaokailnol/feeds_packages_lang_node-prebuilt feeds/packages/lang/node -b packages-24.10
 
-# default settings
-git clone https://$github/Xiaokailnol/default-settings package/new/default-settings -b openwrt-25.12
+# package - openwrt-25.12
+git clone https://$github/Xiaokailnol/openwrt_packages package/new/openwrt_packages
 
 # wwan
 git clone https://$github/Xiaokailnol/wwan-packages package/new/wwan --depth=1
 
-# bandix
-git clone https://$github/timsaya/openwrt-bandix package/new/bandix --depth=1
-git clone https://$github/timsaya/luci-app-bandix package/new/luci-app-bandix --depth=1
-
 # luci-app-filemanager
 rm -rf feeds/luci/applications/luci-app-filemanager
 git clone https://$github/sbwml/luci-app-filemanager package/new/luci-app-filemanager
-
-# luci-app-quickfile
-git clone https://$github/sbwml/luci-app-quickfile package/new/quickfile
-
-# luci-app-airplay2
-git clone https://$github/sbwml/luci-app-airplay2 package/new/airplay2
-
-# luci-app-webdav
-git clone https://$github/sbwml/luci-app-webdav package/new/luci-app-webdav
 
 # pcre - 8.45
 mkdir -p package/libs/pcre
@@ -74,7 +61,7 @@ sed -i 's/0666/0644/g;s/0744/0755/g;s/0777/0755/g' feeds/luci/applications/luci-
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/samba.config
 sed -i 's/0666/0644/g;s/0777/0755/g' feeds/packages/net/samba4/files/smb.conf.template
 # rk3568 bind cpus
-[ "$platform" = "rk3568" ] && sed -i 's#/usr/sbin/smbd -F#/usr/bin/taskset -c 1,0 /usr/sbin/smbd -F#' feeds/packages/net/samba4/files/samba.init
+[ "$platform" = "nanopi-r5s" ] || [ "$platform" = "nanopi-r5c" ] && sed -i 's#/usr/sbin/smbd -F#/usr/bin/taskset -c 1,0 /usr/sbin/smbd -F#' feeds/packages/net/samba4/files/samba.init
 
 # zerotier
 rm -rf feeds/packages/net/zerotier
@@ -100,40 +87,11 @@ git clone https://$github/sbwml/package_new_nethogs package/new/nethogs
 rm -rf feeds/packages/net/{xray-core,v2ray-core,v2ray-geodata,sing-box}
 git clone https://$github/Xiaokailnol/openwrt_helloworld package/new/helloworld -b openwrt-25.12
 
-# openlist
-git clone https://$github/sbwml/luci-app-openlist2 package/new/openlist --depth=1
-
 # netdata
 sed -i 's/syslog/none/g' feeds/packages/admin/netdata/files/netdata.conf
 
-# qBittorrent
-git clone https://$github/sbwml/luci-app-qbittorrent package/new/qbittorrent --depth=1
-
-# unblockneteasemusic
-git clone https://$github/UnblockNeteaseMusic/luci-app-unblockneteasemusic package/new/luci-app-unblockneteasemusic --depth=1
-sed -i 's/解除网易云音乐播放限制/网易云音乐解锁/g' package/new/luci-app-unblockneteasemusic/root/usr/share/luci/menu.d/luci-app-unblockneteasemusic.json
-
-# Theme
-git clone https://$github/Xiaokailnol/luci-theme-argon -b openwrt-25.12 package/new/luci-theme-argon --depth=1
-
-# Mosdns
-git clone https://$github/sbwml/luci-app-mosdns -b v5 package/new/mosdns --depth=1
-
-# OpenAppFilter
-git clone https://$github/sbwml/OpenAppFilter --depth=1 package/new/OpenAppFilter -b v6
-
 # iperf3
 sed -i "s/D_GNU_SOURCE/D_GNU_SOURCE -funroll-loops/g" feeds/packages/net/iperf3/Makefile
-
-# mentohust
-git clone https://$github/sbwml/luci-app-mentohust package/new/mentohust
-
-# custom packages
-rm -rf feeds/packages/utils/coremark
-git clone https://$github/sbwml/openwrt_pkgs package/new/custom --depth=1
-rm -rf package/new/custom/ddns-scripts-aliyun
-# coremark - prebuilt with gcc15
-curl -s $mirror/openwrt/patch/coremark/coremark.aarch64-16-threads > package/new/custom/coremark/src/musl/coremark.aarch64
 
 # luci-compat - fix translation
 sed -i 's/<%:Up%>/<%:Move up%>/g' feeds/luci/modules/luci-compat/luasrc/view/cbi/tblsection.htm
